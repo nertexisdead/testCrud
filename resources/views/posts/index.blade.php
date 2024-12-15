@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <div class="card card-success">
+    <div class="card card-success mt-4">
         <div class="card-header">
             <div class="row justify-content-between align-items-center">
                 <div class="col-6">
