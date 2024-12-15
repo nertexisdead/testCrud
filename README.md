@@ -5,7 +5,7 @@ PHP 8.3, и Composer 2.8.1.
 ## Required
 
 - PHP 8.3+
-- Composer 2.81+
+- Composer 2.8.1+
 - Node.js (front)
 - SQLite (db)
 
@@ -29,7 +29,7 @@ DB_CONNECTION=sqlite
 # DB_PASSWORD=
 ```
 
-### 3. Get started
+### 3. Project settings
 
 ```bash
 npm install
