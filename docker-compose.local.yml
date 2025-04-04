@@ -1,0 +1,96 @@
+services:
+  webserver:
+    container_name: webserver
+    image: docker.angie.software/angie:1.8.3-alpine@sha256:35e5eeb9c0822546a72eae048a680306650648d3d94c9fe6c75d3429110decf0
+    depends_on:
+      - php-fpm
+    restart: unless-stopped
+    networks:
+      - nertexisdead_crud_network
+    volumes:
+      - source: ./application/public/
+        target: /application/public/
+        type: bind
+      - source: ./application/storage/
+        target: /application/storage/
+        type: bind
+      - source: ./deploy/angie/default_local.conf
+        target: /etc/angie/http.d/default.conf
+        type: bind
+    ports:
+      - target: 80
+        published: 8080
+        protocol: tcp
+        mode: host
+
+  php-fpm:
+    container_name: php-fpm
+    build:
+      context: .
+      dockerfile: ./deploy/dockerfiles/Dockerfile_local
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - nertexisdead_crud_network
+    volumes:
+      - source: ./application
+        target: /application
+        type: bind
+      - source: ./deploy/php-fpm/php-ini-overrides_local.ini
+        target: /etc/php/8.4/fpm/conf.d/99-overrides.ini
+        type: bind
+
+  postgres:
+    container_name: postgres
+    image: postgres:17.4-alpine3.21@sha256:7062a2109c4b51f3c792c7ea01e83ed12ef9a980886e3b3d380a7d2e5f6ce3f5
+    restart: unless-stopped
+    networks:
+      - nertexisdead_crud_network
+    volumes:
+      - source: nertexisdead_crud_postgres_data
+        target: /var/lib/postgresql/data
+        type: volume
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=test
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+
+  pgadmin:
+    container_name: pgadmin
+    image: dockerhub.timeweb.cloud/dpage/pgadmin4:8.14@sha256:8a68677a97b8c8d1427dc915672a26d2c4a04376916a68256f53d669d6171be7
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DISABLE_POSTFIX: "yes"
+      PGADMIN_DEFAULT_EMAIL: admin@admin.ru
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - source: nertexisdead_crud_postgres_data
+        target: /var/lib/pgadmin
+        type: volume
+    networks:
+      - raan_brics_ratings_network
+    ports:
+      - target: 80
+        published: 8081
+        protocol: tcp
+        mode: host
+
+volumes:
+  nertexisdead_crud_postgres_data:
+    name: nertexisdead_crud_postgres_data
+    driver: local
+  nertexisdead_crud_pgadmin_data:
+    name: nertexisdead_crud_pgadmin_data
+    driver: local
+
+networks:
+  nertexisdead_crud_network:
+    name: nertexisdead_crud_network
+    attachable: true
