@@ -21,3 +21,9 @@
     </div>
 
 @endsection
+
+@push('js')
+    @vite([
+        'resources/js/posts.js',
+    ])
+@endpush

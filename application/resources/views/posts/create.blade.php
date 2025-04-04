@@ -34,6 +34,6 @@
 
 @push('js')
     @vite([
-        'resources/js/scripts.js',
+        'resources/js/posts.js',
     ])
 @endpush
