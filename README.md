@@ -1,45 +1,26 @@
-# CRUD Pet Project in 20 mins
+## Table of Contents
+- [Description](#description)
+- [Local deployment](#local-deployment)
 
-PHP 8.3, и Composer 2.8.1.
+## Description
+Crud under beer =)
 
-## Required
+## Local deployment
+- Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- Clone project repo
+- Run one of required commands below
 
-- PHP 8.3+
-- Composer 2.8.1+
-- Node.js (front)
-- SQLite (db)
-
-## Steps
-
-### 1. Clone project
-
+Start, build run stack as daemon
 ```bash
-git clone https://github.com/nertexisdead/testCrud.git
-cd project-name
+docker compose -f docker-compose.local.yml up -d
 ```
 
-### 2. Database settings
-
+Build images before start
 ```bash
-DB_CONNECTION=sqlite
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=laravel
-# DB_USERNAME=root
-# DB_PASSWORD=
+docker compose -f docker-compose.local.yml up -d --build
 ```
 
-### 3. Project settings
-
+Stop stack
 ```bash
-npm install
-composer install
+docker compose -f docker-compose.local.yml down
 ```
-
-### 4. Run
-
-```bash
-php artisan serve
-```
-
-

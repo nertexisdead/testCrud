@@ -1,12 +1,12 @@
 import './bootstrap';
 
+import $ from 'jquery';
+window.$ = window.jQuery = $;
+
 import 'admin-lte';
 
 import toastr from 'toastr/toastr';
 window.toastr = toastr;
-
-import './scripts.js';
-
 
 window.defaultErrorHandler = function ($context, requestData) {
     const data = requestData.response.data;
