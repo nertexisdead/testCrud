@@ -1,0 +1,25 @@
+FROM phpdockerio/php:8.3-fpm
+
+RUN apt update && apt upgrade -y \
+    && apt install -y --no-install-recommends  \
+        php8.3-pgsql \
+        php8.3-cli \
+        php8.3-curl \
+        php8.3-mbstring \
+        php8.3-xml \
+        php8.3-xmlreader \
+        php8.3-zip \
+        php8.3-gd \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash \
+    && apt-get install -y nodejs \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN mkdir -p /opt/laravel_setup
+COPY ./deploy/laravel/entrypoint_local.sh /opt/laravel_setup/
+COPY ./deploy/laravel/.env_local /opt/laravel_setup/
+RUN chmod +x /opt/laravel_setup/entrypoint_local.sh
+
+ENTRYPOINT ["/opt/laravel_setup/entrypoint_local.sh"]
