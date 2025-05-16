@@ -24,6 +24,13 @@ php artisan storage:link
 echo "=== Run php artisan migrate ==="
 php artisan migrate
 
+echo "=== Run supervisord ==="
+service supervisor start
+supervisorctl start laravel-task
+supervisorctl start cron
+supervisorctl status laravel-task
+supervisorctl status cron
+
 echo "=== Run install mc ==="
 apt install -y mc
 

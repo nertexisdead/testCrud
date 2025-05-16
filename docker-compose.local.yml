@@ -40,6 +40,9 @@ services:
       - source: ./deploy/php-fpm/php-ini-overrides_local.ini
         target: /etc/php/8.4/fpm/conf.d/99-overrides.ini
         type: bind
+      - source: ./deploy/supervisor/supervisord.conf
+        target: /etc/supervisor/conf.d/supervisord.conf
+        type: bind
 
   postgres:
     container_name: postgres

@@ -2,6 +2,7 @@ FROM phpdockerio/php:8.3-fpm
 
 RUN apt update && apt upgrade -y \
     && apt install -y --no-install-recommends  \
+        supervisor \
         php8.3-pgsql \
         php8.3-cli \
         php8.3-curl \
@@ -10,6 +11,7 @@ RUN apt update && apt upgrade -y \
         php8.3-xmlreader \
         php8.3-zip \
         php8.3-gd \
+        cron \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -21,5 +23,10 @@ RUN mkdir -p /opt/laravel_setup
 COPY ./deploy/laravel/entrypoint_local.sh /opt/laravel_setup/
 COPY ./deploy/laravel/.env_local /opt/laravel_setup/
 RUN chmod +x /opt/laravel_setup/entrypoint_local.sh
+
+RUN echo "* * * * * cd /application && php artisan schedule:run >> /var/log/cron.log 2>&1" > /etc/cron.d/laravel \
+    && chmod 0644 /etc/cron.d/laravel \
+    && crontab /etc/cron.d/laravel \
+    && touch /var/log/cron.log
 
 ENTRYPOINT ["/opt/laravel_setup/entrypoint_local.sh"]
