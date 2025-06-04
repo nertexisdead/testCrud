@@ -3,6 +3,17 @@
 echo "=== Copy .env ==="
 cp -v /opt/laravel_setup/.env_local /application/.env
 
+echo "=== Inserting parameters to global env ==="
+export $(grep -v '^#' /application/.env | xargs)
+
+#echo "=== Check for elasticsearch availability==="
+#if curl -X GET "${ELASTICSEARCH_HOST}/_cat/health?v" -u "$ELASTICSEARCH_USERNAME":"$ELASTICSEARCH_PASSWORD"; then
+#    echo "Elastic available."
+#else
+#    echo "ERROR: Elasticsearch not available!" >&2
+#    exit 1
+#fi
+
 echo "=== Switching shell to /application folder ==="
 cd /application
 
