@@ -3,3 +3,4 @@ discovery.type: single-node
 network.host: 0.0.0.0
 
 xpack.security.enabled: false
+xpack.security.authc.api_key.enabled: false
