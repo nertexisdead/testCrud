@@ -84,6 +84,30 @@ services:
         published: 8081
         protocol: tcp
         mode: host
+  elasticsearch:
+    image: dockerhub.timeweb.cloud/elasticsearch:8.18.2@sha256:d29430e894e3722b11d2aad6f1b4158d760809f643f946351490a60b6f11cbfe
+    container_name: elasticsearch
+    environment:
+      - logger.org.elasticsearch=DEBUG
+    mem_limit: 2g
+    volumes:
+      - source: nertexisdead_elasticsearch_config
+        target: /usr/share/elasticsearch/
+        type: volume
+      - source: ./deploy/elasticsearch/elasticsearch_local.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        type: bind
+    networks:
+      - nertexisdead_crud_network
+    ports:
+      - target: 9200
+        published: 9200
+        protocol: tcp
+        mode: host
+      - target: 9300
+        published: 9300
+        protocol: tcp
+        mode: host
 
 volumes:
   nertexisdead_crud_postgres_data:
@@ -91,6 +115,9 @@ volumes:
     driver: local
   nertexisdead_crud_pgadmin_data:
     name: nertexisdead_crud_pgadmin_data
+    driver: local
+  nertexisdead_elasticsearch_config:
+    name: nertexisdead_elasticsearch_config
     driver: local
 
 networks:
