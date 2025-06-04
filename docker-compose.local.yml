@@ -94,6 +94,9 @@ services:
       - source: nertexisdead_elasticsearch_config
         target: /usr/share/elasticsearch/
         type: volume
+      - source: ./deploy/elasticsearch/jvm.options_local
+        target: /usr/share/elasticsearch/config/jvm.options.d/jvm.option
+        type: bind
       - source: ./deploy/elasticsearch/elasticsearch_local.yml
         target: /usr/share/elasticsearch/config/elasticsearch.yml
         type: bind
