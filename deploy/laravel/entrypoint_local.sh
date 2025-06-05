@@ -36,12 +36,15 @@ php artisan storage:link
 echo "=== Run php artisan migrate ==="
 php artisan migrate
 
-echo "=== Run supervisord ==="
-service supervisor start
-supervisorctl start laravel-task
-supervisorctl start cron
-supervisorctl status laravel-task
-supervisorctl status cron
+echo "=== Run php artisan config ==="
+php artisan config:cache
+
+#echo "=== Run supervisord ==="
+#service supervisor start
+#supervisorctl start laravel-task
+#supervisorctl start cron
+#supervisorctl status laravel-task
+#supervisorctl status cron
 
 echo "=== Run /usr/sbin/php-fpm8.3 -O ==="
 /usr/sbin/php-fpm8.3 -O
