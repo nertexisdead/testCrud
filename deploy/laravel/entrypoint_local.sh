@@ -1,15 +1,19 @@
 #!/bin/bash
+set -xeuo pipefail
 
 echo "=== Copy .env ==="
 cp -v /opt/laravel_setup/.env_local /application/.env
 
-#echo "=== Check for elasticsearch availability==="
-#if curl -X GET "${ELASTICSEARCH_HOST}/_cat/health?v" -u "$ELASTICSEARCH_USERNAME":"$ELASTICSEARCH_PASSWORD"; then
-#    echo "Elastic available."
-#else
-#    echo "ERROR: Elasticsearch not available!" >&2
-#    exit 1
-#fi
+echo "=== Inserting parameters to global env ==="
+export $(grep -v '^#' /application/.env | xargs)
+
+echo "=== Check for elasticsearch availability==="
+if curl -X GET "${ELASTICSEARCH_HOST}/_cat/health?v" -u "$ELASTICSEARCH_USERNAME":"$ELASTICSEARCH_PASSWORD"; then
+    echo "Elastic available."
+else
+    echo "ERROR: Elasticsearch not available!" >&2
+    exit 1
+fi
 
 echo "=== Switching shell to /application folder ==="
 cd /application
@@ -38,9 +42,6 @@ supervisorctl start laravel-task
 supervisorctl start cron
 supervisorctl status laravel-task
 supervisorctl status cron
-
-echo "=== Run install mc ==="
-apt install -y mc
 
 echo "=== Run /usr/sbin/php-fpm8.3 -O ==="
 /usr/sbin/php-fpm8.3 -O
