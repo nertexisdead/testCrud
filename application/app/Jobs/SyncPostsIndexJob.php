@@ -33,14 +33,15 @@ class SyncPostsIndexJob implements ShouldQueue
                 ->where('field', 'title')
                 ->mapWithKeys(fn($t) => [$t->locale => $t->value])
                 ->toArray();
+            if (!empty($translationsByLocale)) {
+                $document = [
+                    'id' => $post->id,
+                    'alias' => $post->alias,
+                    'title' => $translationsByLocale,
+                ];
 
-            $document = [
-                'id' => $post->id,
-                'alias' => $post->alias,
-                'title' => $translationsByLocale,
-            ];
-
-            $client->indexDocument($indexName, $post->id, $document);
+                $client->indexDocument($indexName, $post->id, $document);
+            }
         }
     }
 }

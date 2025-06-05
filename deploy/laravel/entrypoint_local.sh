@@ -36,8 +36,6 @@ php artisan storage:link
 echo "=== Run php artisan migrate ==="
 php artisan migrate
 
-echo "=== Run php artisan config ==="
-php artisan config:cache
 
 #echo "=== Run supervisord ==="
 #service supervisor start

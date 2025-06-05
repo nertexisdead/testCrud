@@ -26,7 +26,7 @@ class Post extends Model
         return [
             'title' => [
                 'ru' => $this->getTitle('ru'),
-                'en' => $this->getTitle('en'),
+                'uz' => $this->getTitle('uz'),
             ],
             'alias' => $this->alias,
         ];
@@ -48,11 +48,11 @@ class Post extends Model
 
     public function getTitle($locale): string
     {
-        return $this->getTranslationValue('title', $locale);
+        return $this->getTranslationValue('title', $locale) ?? '';
     }
 
     public function getContent($locale): string
     {
-        return $this->getTranslationValue('content', $locale);
+        return $this->getTranslationValue('content', $locale) ?? '';
     }
 }

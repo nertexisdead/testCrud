@@ -44,7 +44,6 @@ class CheckServicesAvailabilityJob implements ShouldQueue
             // Создаем клиент Elasticsearch
             $client = ClientBuilder::create()
                 ->setHosts([env('ELASTICSEARCH_HOST')])
-                ->setBasicAuthentication(env('ELASTICSEARCH_USERNAME'), env('ELASTICSEARCH_PASSWORD'))
                 ->build()
             ;
 

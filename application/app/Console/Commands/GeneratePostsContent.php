@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use Faker\Factory;
 use Illuminate\Console\Command;
 use App\Models\Post;
 use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class GeneratePostsContent extends Command
 {
@@ -14,35 +16,40 @@ class GeneratePostsContent extends Command
 
     public function handle()
     {
-        $locales = config('app.availables_locales', ['ru', 'en']);
+        $filePath = public_path('products_exzap.xlsx');
+        $spreadsheet = IOFactory::load($filePath);
+        $sheet = $spreadsheet->getSheet(0);
+        $data = $sheet->toArray(null, true, true, true);
+
+        $locales = [
+            'ru' => 'B', // колонка B — это name_ru
+            'uz' => 'C', // колонка C — это name_uz
+        ];
+
         $fields = ['title', 'content'];
 
-        $this->info("Starting creation of 1000 posts...");
+        foreach ($data as $index => $row) {
+            if ($index === 1) continue; // пропускаем заголовки
 
-        for ($i = 0; $i < 200; $i++) {
             $post = Post::create([
-                'alias' => Str::slug('post-' . $i . '-' . now()->timestamp),
+                'alias' => Str::slug('post-' . $index . '-' . now()->timestamp),
+                'is_active' => false,
             ]);
 
-            foreach ($locales as $locale) {
-                foreach ($fields as $field) {
-                    $faker = \Faker\Factory::create($locale === 'ru' ? 'ru_RU' : 'en_US');
+            foreach ($locales as $locale => $column) {
+                $faker = Factory::create($locale === 'ru' ? 'ru_RU' : 'en_US');
 
+                foreach ($fields as $field) {
                     $value = $field === 'title'
-                        ? $faker->realText(10)
+                        ? $row[$column] ?? '---'
                         : $faker->realText(100);
 
                     $post->translations()->create([
                         'locale' => $locale,
                         'field' => $field,
                         'value' => $value,
-                        'is_active' => true,
                     ]);
                 }
-            }
-
-            if ($i % 100 === 0) {
-                $this->info("Created $i posts...");
             }
         }
 

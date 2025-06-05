@@ -88,7 +88,7 @@ class Elasticsearch
     {
         try {
             // Удаляем все индексы с помощью wildcard '*'
-            $this->client->indices()->delete(['index' => '*']);
+            $this->client->indices()->delete(['index' => 'posts']);
             Log::info('All indices have been deleted.');
         } catch (\Exception $e) {
             Log::error('Failed to delete indices: ' . $e->getMessage());
