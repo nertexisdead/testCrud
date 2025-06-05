@@ -12,16 +12,42 @@
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    <label>{{__('Post: title')}}</label>
-                    <input name="title" type="text" class="form-control" placeholder="{{__('Enter post title')}}"
-                           value="{{ $post->title }}">
-                    <span class="error title"></span>
+                    <label>{{ __('Post: alias') }}</label>
+                    <input name="alias" type="text" class="form-control" placeholder="{{ __('Enter post alias') }}" value="{{ $post->alias }}">
                 </div>
-                <div class="form-group">
-                    <label>{{__('Post: content')}}</label>
-                    <textarea name="content" type="text" class="form-control js-posts-editor"
-                              placeholder="{{__('Enter post content')}}" rows="4">{{ $post->content }}</textarea>
-                    <span class="error content"></span>
+                <ul class="nav nav-tabs" role="tablist">
+                    @foreach(config('app.availables_locales') as $index => $locale)
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link @if($index === 0) active @endif" id="tab-{{ $locale }}"
+                                    data-bs-toggle="tab" data-bs-target="#content-{{ $locale }}" type="button"
+                                    role="tab" aria-controls="content-{{ $locale }}"
+                                    aria-selected="{{ $index === 0 ? 'true' : 'false' }}">
+                                {{ strtoupper($locale) }}
+                            </button>
+                        </li>
+                    @endforeach
+                </ul>
+
+                <!-- Контент табов -->
+                <div class="tab-content mt-3">
+                    @foreach(config('app.availables_locales') as $index => $locale)
+                        <div class="tab-pane fade @if($index === 0) show active @endif" id="content-{{ $locale }}"
+                             role="tabpanel" aria-labelledby="tab-{{ $locale }}">
+                            <div class="form-group">
+                                <label>{{ __('Post: title') }} ({{ $locale }})</label>
+                                <input name="title[{{ $locale }}]" type="text" class="form-control"
+                                       placeholder="{{ __('Enter post title') }}" value="{{ $post->getTitle($locale) }}">
+                                <span class="error title_{{ $locale }}"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label>{{ __('Post: content') }} ({{ $locale }})</label>
+                                <textarea name="content[{{ $locale }}]" class="form-control js-posts-editor"
+                                          placeholder="{{ __('Enter post content') }}" rows="4">{{ $post->getContent($locale) }}</textarea>
+                                <span class="error content_{{ $locale }}"></span>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
             <div class="card-footer">

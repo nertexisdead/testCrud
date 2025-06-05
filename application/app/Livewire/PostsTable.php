@@ -36,12 +36,12 @@ class PostsTable extends DataTableComponent
     public function filters(): array
     {
         return [
-            TextFilter::make(__('Filter: post title'), 'ptitle')
+            TextFilter::make(__('Filter: post alias'), 'palias')
                 ->config([
                     'placeholder' => __('Filter by post'),
                 ])
                 ->filter(function (Builder $builder, string $value) {
-                    $builder->whereRaw('LOWER("posts"."title") LIKE \'%' . Str::lower($value) . '%\'');
+                    $builder->whereRaw('LOWER("posts"."alias") LIKE \'%' . Str::lower($value) . '%\'');
                 }),
             SelectFilter::make(__('Filter: post status'), 'status')
                 ->options([
@@ -79,7 +79,7 @@ class PostsTable extends DataTableComponent
                         )
                         ;
                 }),
-            Column::make(__('Post: title'), 'title')
+            Column::make(__('Post: alias'), 'alias')
                 ->sortable(),
             Column::make(__('Created_at'), 'created_at')
                 ->sortable()

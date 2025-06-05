@@ -9,22 +9,44 @@ use Illuminate\Http\JsonResponse;
 
 class PostService
 {
-    public function save(StoreRequest $request): Post|JsonResponse
+    public function updateOrCreatePost($request, Post $post = null): Post
     {
-        $post = Post::create(
-            $request->all()
-        );
+        if (!$post) {
+            $post = Post::create($request->all());
+        } else {
+            $post->update($request->all());
+        }
+
+        foreach (config('app.availables_locales') as $locale) {
+            foreach (['title', 'content'] as $field) {
+                $value = $request->input($field . '.' . $locale);
+
+                if ($value !== null) {
+                    $post->translations()->updateOrCreate(
+                        [
+                            'locale' => $locale,
+                            'field' => $field,
+                        ],
+                        [
+                            'field' => $field,
+                            'value' => $value,
+                        ]
+                    );
+                }
+            }
+        }
 
         return $post;
     }
 
+    public function save(StoreRequest $request): Post|JsonResponse
+    {
+        return $this->updateOrCreatePost($request);
+    }
+
     public function update(StoreRequest $request, Post $post): Post
     {
-        $post->update(
-            $request->all()
-        );
-
-        return $post;
+        return $this->updateOrCreatePost($request, $post);
     }
 
     public function delete(Post $post): void
