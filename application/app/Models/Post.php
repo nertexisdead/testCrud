@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Elastic\ScoutDriverPlus\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
+    use Searchable;
     use HasFactory;
 
     protected $fillable = [
@@ -17,6 +19,17 @@ class Post extends Model
     public function isActive(): bool
     {
         return $this->is_active;
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'title' => [
+                'ru' => $this->getTitle('ru'),
+                'en' => $this->getTitle('en'),
+            ],
+            'alias' => $this->alias,
+        ];
     }
 
     public function translations()
