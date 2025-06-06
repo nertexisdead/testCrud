@@ -20,26 +20,60 @@ class Elasticsearch
         ;
     }
 
-    public function createIndex(string $indexName): void
+    public function createIndex(string $indexName, array $synonyms): void
     {
-        $this->createIndexWithMapping($indexName);
+        $this->createIndexWithMapping($indexName, $synonyms);
     }
 
-    public function createIndexWithMapping(string $indexName): void
+    public function createIndexWithMapping(string $indexName, array $synonyms): void
     {
         Log::info("Creating index {$indexName} with mapping");
 
         $params = [
             'index' => $indexName,
             'body' => [
+                'settings' => [
+                    'analysis' => [
+                        'filter' => [
+                            'synonym_filter' => [
+                                'type' => 'synonym',
+                                'synonyms' => $synonyms,
+                            ],
+                        ],
+                        'analyzer' => [
+                            'synonym_analyzer' => [
+                                'tokenizer' => 'standard',
+                                'filter' => [
+                                    'lowercase',
+                                    'synonym_filter',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
                 'mappings' => [
                     'properties' => [
                         'id' => ['type' => 'integer'],
                         'alias' => ['type' => 'keyword'],
+                        'title' => [
+                            'properties' => [
+                                'ru' => [
+                                    'type' => 'text',
+                                    'analyzer' => 'synonym_analyzer',
+                                ],
+                                'uz' => [
+                                    'type' => 'text',
+                                    'analyzer' => 'synonym_analyzer',
+                                ],
+                            ],
+                        ],
                         'translations' => [
                             'type' => 'nested',
                             'properties' => [
-                                'name' => ['type' => 'text'],
+                                'name' => [
+                                    'type' => 'text',
+                                    'analyzer' => 'synonym_analyzer',
+                                ],
                                 'locale' => ['type' => 'keyword'],
                             ],
                         ],
@@ -53,7 +87,7 @@ class Elasticsearch
         Log::info("Index {$indexName} created with mapping successfully.");
     }
 
-    public function ensureIndexExists(string $indexName): void
+    public function ensureIndexExists(string $indexName, array $synonyms): void
     {
         try {
             $this
@@ -63,7 +97,7 @@ class Elasticsearch
             ;
         } catch (ClientResponseException $e) {
             if ($e->getCode() === 404) {
-                $this->createIndex($indexName);
+                $this->createIndex($indexName, $synonyms);
             } else {
                 throw $e;
             }

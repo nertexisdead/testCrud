@@ -4,12 +4,11 @@ namespace App\Jobs;
 
 use App\Components\Helpers\Elasticsearch;
 use App\Models\Post;
+use App\Models\Synonim;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
 
 class SyncPostsIndexJob implements ShouldQueue
 {
@@ -24,7 +23,11 @@ class SyncPostsIndexJob implements ShouldQueue
         $client = new Elasticsearch();
         $indexName = 'posts';
 //        $client->deleteAllIndices();
-        $client->ensureIndexExists($indexName);
+//        dd(123);
+        $synonyms = Synonim::all()->map(function($item) {
+            return "{$item->word}, {$item->synonym}";
+        })->toArray();
+        $client->ensureIndexExists($indexName, $synonyms);
 
         $posts = Post::with('translations')->get();
 

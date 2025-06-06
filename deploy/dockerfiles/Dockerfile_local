@@ -1,19 +1,20 @@
-FROM phpdockerio/php:8.3-fpm
+FROM phpdockerio/php:8.4-fpm
 
-RUN apt update && apt upgrade -y \
+RUN apt update \
     && apt install -y --no-install-recommends  \
-        supervisor \
-        php8.3-pgsql \
-        php8.3-cli \
-        php8.3-curl \
-        php8.3-mbstring \
-        php8.3-xml \
-        php8.3-xmlreader \
-        php8.3-zip \
-        php8.3-gd \
-        cron \
-    && apt clean \
-    && rm -rf /var/lib/apt/lists/*
+    supervisor \
+    php8.4-pgsql \
+    php8.4-cli \
+    php8.4-curl \
+    php8.4-mbstring \
+    php8.4-xml \
+    php8.4-xmlreader \
+    php8.4-zip \
+    php8.4-gd \
+    nano \
+    php-yaml \
+    mc \
+    cron
 
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash \
     && apt-get install -y nodejs \

@@ -20,6 +20,7 @@ class SearchService
                     ->query($q)
                     ->type('best_fields')
                     ->fuzziness('AUTO')
+//                    ->analyzer('synonym_analyzer')
             );
 
             $queryBuilder = Post::searchQuery($query);
@@ -51,7 +52,10 @@ class SearchService
             ];
         } catch (\Throwable $e) {
             Log::error('Elasticsearch is unavailable: ' . $e->getMessage());
-            return response()->json(['error' => 'Elasticsearch is unavailable'], 500);
+            return [
+                'posts' => [],
+                'total' => 0,
+            ];
         }
     }
 }
