@@ -11,11 +11,7 @@ class StoreRequest extends FormRequest
 
     public function rules()
     {
-        return [
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'is_active' => 'boolean',
-        ];
+        return [];
     }
 
     public function messages()

@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('synonims', function (Blueprint $table) {
             $table->id();
-            $table->string('alias');
-            $table->boolean('is_active')->default(false);
-            $table->timestamps();
+            $table->string('word');
+            $table->string('synonym');
         });
     }
 
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('synonims');
     }
 };

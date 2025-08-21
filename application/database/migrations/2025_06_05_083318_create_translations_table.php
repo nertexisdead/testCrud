@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('translations', function (Blueprint $table) {
             $table->id();
-            $table->string('alias');
-            $table->boolean('is_active')->default(false);
+            $table->morphs('translatable');
+            $table->string('locale');
+            $table->string('field');
+            $table->text('value');
             $table->timestamps();
+
+            $table->index(['translatable_type', 'translatable_id', 'locale', 'field'], 'translations_full_index');
         });
     }
 
@@ -24,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('translations');
     }
 };

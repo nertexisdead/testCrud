@@ -4,11 +4,13 @@ set -xeuo pipefail
 echo "=== Copy .env ==="
 cp -v /opt/laravel_setup/.env_local /application/.env
 
-echo "=== Inserting parameters to global env ==="
-export $(grep -v '^#' /application/.env | xargs)
+echo "=== Load .env variables into bash environment ==="
+set -a
+source /application/.env
+set +a
 
 echo "=== Check for elasticsearch availability==="
-if curl -X GET "${ELASTICSEARCH_HOST}/_cat/health?v" -u "$ELASTICSEARCH_USERNAME":"$ELASTICSEARCH_PASSWORD"; then
+if curl -X GET "${ELASTICSEARCH_HOST}/_cat/health?v"; then
     echo "Elastic available."
 else
     echo "ERROR: Elasticsearch not available!" >&2
@@ -36,12 +38,13 @@ php artisan storage:link
 echo "=== Run php artisan migrate ==="
 php artisan migrate
 
-echo "=== Run supervisord ==="
-service supervisor start
-supervisorctl start laravel-task
-supervisorctl start cron
-supervisorctl status laravel-task
-supervisorctl status cron
 
-echo "=== Run /usr/sbin/php-fpm8.3 -O ==="
-/usr/sbin/php-fpm8.3 -O
+#echo "=== Run supervisord ==="
+#service supervisor start
+#supervisorctl start laravel-task
+#supervisorctl start cron
+#supervisorctl status laravel-task
+#supervisorctl status cron
+
+echo "=== Run /usr/sbin/php-fpm8.4 -O ==="
+/usr/sbin/php-fpm8.4 -O

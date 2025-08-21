@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\MainController;
 
-Route::get('/', function () {
-    return 'index page';
-})->name('index');
+Route::get('/', [MainController::class, 'index'])->name('index');
+Route::post('/search', [MainController::class, 'search'])->name('search');
 
 Route::prefix('posts')->as('posts.')->group(function () {
     Route::get('/', [PostController::class, 'index'])->name('index');
