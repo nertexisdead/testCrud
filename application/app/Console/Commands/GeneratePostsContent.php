@@ -6,53 +6,47 @@ use Faker\Factory;
 use Illuminate\Console\Command;
 use App\Models\Post;
 use Illuminate\Support\Str;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class GeneratePostsContent extends Command
 {
-    protected $signature = 'app:generate-posts-content';
+    protected $signature = 'app:generate-posts-content {count=1000}';
 
     protected $description = 'Generate random posts content';
 
     public function handle()
     {
-        $filePath = public_path('products_exzap.xlsx');
-        $spreadsheet = IOFactory::load($filePath);
-        $sheet = $spreadsheet->getSheet(0);
-        $data = $sheet->toArray(null, true, true, true);
+        $count = (int) $this->argument('count');
 
         $locales = [
-            'ru' => 'B', // колонка B — это name_ru
-            'uz' => 'C', // колонка C — это name_uz
+            'ru' => 'ru_RU',
+            'uz' => 'en_US',
         ];
 
         $fields = ['title', 'content'];
 
-        foreach ($data as $index => $row) {
-            if ($index === 1) continue; // пропускаем заголовки
-
+        for ($i = 1; $i <= $count; $i++) {
             $post = Post::create([
-                'alias' => Str::slug('post-' . $index . '-' . now()->timestamp),
+                'alias' => Str::slug('post-' . $i . '-' . now()->timestamp),
                 'is_active' => false,
             ]);
 
-            foreach ($locales as $locale => $column) {
-                $faker = Factory::create($locale === 'ru' ? 'ru_RU' : 'en_US');
+            foreach ($locales as $locale => $fakerLocale) {
+                $faker = Factory::create($fakerLocale);
 
                 foreach ($fields as $field) {
                     $value = $field === 'title'
-                        ? $row[$column] ?? '---'
-                        : $faker->realText(100);
+                        ? $faker->sentence(6)
+                        : $faker->realText(200);
 
                     $post->translations()->create([
                         'locale' => $locale,
-                        'field' => $field,
-                        'value' => $value,
+                        'field'  => $field,
+                        'value'  => $value,
                     ]);
                 }
             }
         }
 
-        $this->info("Done: 1000 posts created.");
+        $this->info("Done: {$count} posts created.");
     }
 }
